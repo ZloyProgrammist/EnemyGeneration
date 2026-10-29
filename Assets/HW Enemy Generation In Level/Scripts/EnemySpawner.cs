@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -8,6 +6,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField, Tooltip("Префаб врага")] private Enemy _prefab;
     [SerializeField, Tooltip("Точки спавна врага")] private Transform[] _spawnPoints;
     [SerializeField, Tooltip("Интервал между спавнами врага")] private float _spawnInterval = 2f;
+    [SerializeField] private Transform _target;
 
     private float _timer = 0;
 
@@ -36,6 +35,6 @@ public class EnemySpawner : MonoBehaviour
         Transform spawnPosition = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
 
         Enemy enemy = Instantiate(_prefab, spawnPosition);
-        enemy.Instantiate(spawnPosition.forward);
+        enemy.Instantiate(_target);
     }
 }

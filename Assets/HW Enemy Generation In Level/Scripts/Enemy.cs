@@ -1,25 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
+    [SerializeField] private float _stopMoveDistance = 0.2f;
+    [SerializeField] private Transform _target;
+    
+    private Rigidbody _rigidbody;
 
-    private Vector3 _moveDirection;
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {
-        transform.position += _moveDirection * _speed * Time.deltaTime;
+        MoveToTarget();
     }
 
-    public void Instantiate(Vector3 moveDirection)
+    public void Instantiate(Transform target)
     {
-        _moveDirection = moveDirection.normalized;
+        _target = target;
+    }
 
-        if (moveDirection != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(moveDirection);
-        }
+    private void MoveToTarget()
+    {
+        if (_target == null)
+            return;
+        
+        Vector3 targetPosition = _target.position - _rigidbody.position;
+
+        if (targetPosition.sqrMagnitude <= _stopMoveDistance * _stopMoveDistance)
+            return;
+
+        Vector3 direction = targetPosition.normalized;
+        Vector3 newPosition = _rigidbody.position + direction * _speed * Time.deltaTime;
+
+        _rigidbody.MovePosition(newPosition);
+        _rigidbody.rotation = Quaternion.LookRotation(direction);
     }
 }
